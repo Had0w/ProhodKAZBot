@@ -9,18 +9,12 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-
-import java.awt.*;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
 public class Bot extends TelegramLongPollingBot {
     public static void main(String[] args) {
@@ -65,12 +59,12 @@ public class Bot extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        if(message != null && message.hasText()) {
+        if (message != null && message.hasText()) {
             switch (message.getText()) {
                 case "/Am I late?":
                     sentMsg(message, amILate());
                     break;
-                case  "/currentTime":
+                case "/currentTime":
                     Date date = new Date();
                     DateFormat dateFormat = new SimpleDateFormat("HH:mm");
                     sentMsg(message, dateFormat.format(date));
@@ -79,47 +73,41 @@ public class Bot extends TelegramLongPollingBot {
             }
         }
     }
+
     public String amILate() {
         LocalTime now = LocalTime.now();
         LocalTime begin = LocalTime.of(8, 30);
         LocalTime end = LocalTime.of(17, 30);
-        if(now.isAfter(begin) && now.isBefore(end)) {
-           int countOfHours = (now.getMinute() - begin.getMinute()) / 60;
-           int countOfMinutes = (now.getMinute() - begin.getMinute()) % 60;
-           double totalCf = countOfHours;
-           if((countOfMinutes > 0) && (countOfMinutes <= 6)) {
-               totalCf = totalCf + 0.1;
-           }
-           else if((countOfMinutes > 6) && (countOfMinutes <= 12)) {
-                totalCf = totalCf + 0.2;
-           }
-           else if((countOfMinutes > 12) && (countOfMinutes <= 18)) {
-               totalCf = totalCf + 0.3;
-           }
-           else if((countOfMinutes > 18) && (countOfMinutes <= 24)) {
-               totalCf = totalCf + 0.4;
-           }
-           else if((countOfMinutes > 24) && (countOfMinutes <= 30)) {
-               totalCf = totalCf + 0.5;
-           }
-           else if((countOfMinutes > 30) && (countOfMinutes <= 36)) {
-               totalCf = totalCf + 0.6;
-           }
-           else if((countOfMinutes > 36) && (countOfMinutes <= 42)) {
-               totalCf = totalCf + 0.7;
-           }
-           else if((countOfMinutes > 42) && (countOfMinutes <= 48)) {
-               totalCf = totalCf + 0.8;
-           }
-           else if((countOfMinutes > 48) && (countOfMinutes <= 54)) {
-               totalCf = totalCf + 0.9;
-           }
-           else totalCf = totalCf + 1;
-           String s = "" + totalCf;
-            return s;
-        }
-        else if(now.isBefore(begin)) return "Вы не опоздали";
+        if (now.isAfter(begin) && now.isBefore(end)) {
+            int countOfHours = (now.getHour() - begin.getHour());
+            int countOfMinutes = (now.getMinute() - begin.getMinute());
+            int total = countOfHours * 60 + countOfMinutes;
+            int finHour = total / 60;
+            int finMin = total % 60;
+            double min10 = finHour;
+            if ((finMin > 0) && (finMin <= 6)) {
+                min10 = min10 + 0.1;
+            } else if ((finMin > 6) && (finMin <= 12)) {
+                min10 = min10 + 0.2;
+            } else if ((finMin > 12) && (finMin <= 18)) {
+                min10 = min10 + 0.3;
+            } else if ((finMin > 18) && (finMin <= 24)) {
+                min10 = min10 + 0.4;
+            } else if ((finMin > 24) && (finMin <= 30)) {
+                min10 = min10 + 0.5;
+            } else if ((finMin > 30) && (finMin <= 36)) {
+                min10 = min10 + 0.6;
+            } else if ((finMin > 36) && (finMin <= 42)) {
+                min10 = min10 + 0.7;
+            } else if ((finMin > 42) && (finMin <= 48)) {
+                min10 = min10 + 0.8;
+            } else if ((finMin > 48) && (finMin <= 54)) {
+                min10 = min10 + 0.9;
+            }
+            return "Ваше опоздание: " + min10;
+        } else if (now.isBefore(begin)) return "Вы не опоздали";
         else return "Ваш рабочий день уже закончлся:)";
+
     }
 
     public String getBotUsername() {
