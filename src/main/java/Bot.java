@@ -107,7 +107,6 @@ public class Bot extends TelegramLongPollingBot {
             return "Ваше опоздание: " + min10;
         } else if (now.isBefore(begin)) return "Вы не опоздали";
         else return "Ваш рабочий день уже закончлся:)";
-
     }
 
     public String getBotUsername() {
