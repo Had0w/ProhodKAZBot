@@ -80,7 +80,7 @@ public class Bot extends TelegramLongPollingBot {
 
     public String amILate() {
         LocalTime now = LocalTime.now();
-        now.plusHours(3);// Костыль для часового пояса
+        now = now.plusHours(3);// Костыль для часового пояса
         LocalTime begin = LocalTime.of(8, 30);
         LocalTime end = LocalTime.of(17, 30);
         if (now.isAfter(begin) && now.isBefore(end)) {
