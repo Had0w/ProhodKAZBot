@@ -128,11 +128,11 @@ public class Bot extends TelegramLongPollingBot {
 
     public String getBotUsername() {
 
-        return prop.properties.getProperty("botName");
+        return "ProhodKAZbot";
     }
 
     public String getBotToken() {
 
-        return prop.properties.getProperty("Token");
+        return "1455259153:AAG31eSyFfes9Pb4lGmy5ySjM4ik27wNIeA";
     }
 }
