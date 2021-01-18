@@ -83,7 +83,7 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public String amILate() {
-        LocalTime now = LocalTime.now();
+        LocalTime now = LocalTime.now().plusHours(3);
         LocalTime begin = LocalTime.of(8, 29);
         LocalTime startLunch = LocalTime.of(12, 0);
         LocalTime endLunch = LocalTime.of(13, 0);
