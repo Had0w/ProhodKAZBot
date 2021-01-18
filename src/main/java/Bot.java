@@ -21,6 +21,7 @@ import java.util.Map;
 
 public class Bot extends TelegramLongPollingBot {
     private static final Map<String, String> getenv = System.getenv();
+    Prop prop = new Prop();
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
@@ -55,8 +56,8 @@ public class Bot extends TelegramLongPollingBot {
         List<KeyboardRow> keyboardRowList = new ArrayList<KeyboardRow>(); // список строк с кнопками
 
         KeyboardRow keyboardFirstButtons = new KeyboardRow(); // создание строки
-        keyboardFirstButtons.add(new KeyboardButton("/Am I late?"));
-        keyboardFirstButtons.add(new KeyboardButton("/currentTime"));// создание двух кнопок на этой троке
+        keyboardFirstButtons.add(new KeyboardButton("Пришел"));
+//        keyboardFirstButtons.add(new KeyboardButton("currentTime"));// создание двух кнопок на этой троке
         keyboardRowList.add(keyboardFirstButtons);
         replyKeyboardMarkup.setKeyboard(keyboardRowList);
     }
@@ -65,30 +66,39 @@ public class Bot extends TelegramLongPollingBot {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             switch (message.getText()) {
-                case "/Am I late?":
+                case "/start":
+                    sentMsg(message, "Добро пожаловать!");
+                    break;
+                case "Пришел":
                     sentMsg(message, amILate());
                     break;
-                case "/currentTime":
-                    Date date = new Date();
-                    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-                    sentMsg(message, dateFormat.format(date));
-                    break;
+//                case "/currentTime":
+//                    Date date = new Date();
+//                    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+//                    sentMsg(message, dateFormat.format(date));
+//                    break;
                 default:
             }
         }
     }
 
     public String amILate() {
-        LocalTime now = LocalTime.now().plusHours(3);
-        LocalTime begin = LocalTime.of(8, 30);
-        LocalTime end = LocalTime.of(17, 30);
+        LocalTime now = LocalTime.now();
+        LocalTime begin = LocalTime.of(8, 29);
+        LocalTime startLunch = LocalTime.of(12, 0);
+        LocalTime endLunch = LocalTime.of(13, 0);
+        LocalTime end = LocalTime.of(17, 31);
+        double min10;
+        if(now.isAfter(startLunch) && now.isBefore(endLunch)) { // Если пришел в обед
+            return "Ваше опоздание " + "3.5" + "(Сейчас обед)"; // Костыль! Добавить расчет времени
+        }
         if (now.isAfter(begin) && now.isBefore(end)) {
             int countOfHours = (now.getHour() - begin.getHour());
             int countOfMinutes = (now.getMinute() - begin.getMinute());
             int total = countOfHours * 60 + countOfMinutes;
             int finHour = total / 60;
             int finMin = total % 60;
-            double min10 = finHour;
+            min10 = finHour;
             if ((finMin > 0) && (finMin <= 6)) {
                 min10 = min10 + 0.1;
             } else if ((finMin > 6) && (finMin <= 12)) {
@@ -108,16 +118,21 @@ public class Bot extends TelegramLongPollingBot {
             } else if ((finMin > 48) && (finMin <= 54)) {
                 min10 = min10 + 0.9;
             }
+           if(now.isAfter(endLunch)) {
+               min10--;
+           }
             return "Ваше опоздание: " + min10;
         } else if (now.isBefore(begin)) return "Вы не опоздали";
-        else return "Ваш рабочий день уже закончлся:)";
+        else return "Ваш рабочий день уже закончился:)";
     }
 
     public String getBotUsername() {
-        return "ProhodKAZbot";
+
+        return prop.properties.getProperty("botName");
     }
 
     public String getBotToken() {
-        return "1455259153:AAG31eSyFfes9Pb4lGmy5ySjM4ik27wNIeA";
+
+        return prop.properties.getProperty("Token");
     }
 }
