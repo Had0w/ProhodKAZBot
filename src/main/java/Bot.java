@@ -1,3 +1,4 @@
+import com.google.inject.internal.cglib.proxy.$CallbackFilter;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -11,17 +12,25 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Bot extends TelegramLongPollingBot {
     private static final Map<String, String> getenv = System.getenv();
-    Prop prop = new Prop();
+    static File file = new File("src\\main\\resources\\config.properties");
+    static Properties properties = new Properties();
+    static {
+        try {
+            properties.load(new FileReader(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
@@ -56,7 +65,7 @@ public class Bot extends TelegramLongPollingBot {
         List<KeyboardRow> keyboardRowList = new ArrayList<KeyboardRow>(); // список строк с кнопками
 
         KeyboardRow keyboardFirstButtons = new KeyboardRow(); // создание строки
-        keyboardFirstButtons.add(new KeyboardButton("Пришел"));
+        keyboardFirstButtons.add(new KeyboardButton("Вход"));
 //        keyboardFirstButtons.add(new KeyboardButton("currentTime"));// создание двух кнопок на этой троке
         keyboardRowList.add(keyboardFirstButtons);
         replyKeyboardMarkup.setKeyboard(keyboardRowList);
@@ -69,7 +78,7 @@ public class Bot extends TelegramLongPollingBot {
                 case "/start":
                     sentMsg(message, "Добро пожаловать!");
                     break;
-                case "Пришел":
+                case "Вход":
                     sentMsg(message, amILate());
                     break;
 //                case "/currentTime":
@@ -127,12 +136,10 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public String getBotUsername() {
-
-        return "ProhodKAZbot";
+        return properties.getProperty("testBotName");
     }
 
     public String getBotToken() {
-
-        return "1455259153:AAG31eSyFfes9Pb4lGmy5ySjM4ik27wNIeA";
+        return properties.getProperty("testToken");
     }
 }
